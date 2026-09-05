@@ -16,16 +16,43 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* SIM Watermark Background Grid */
+    .bg-logos {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: center;
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-logos i {
+      font-size: 80px;
+      margin: 30px;
+      color: #38bdf8;
     }
 
     .card {
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.95);
       border: 1px solid #334155;
       border-radius: 16px;
       padding: 25px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(5px);
     }
 
     .card-title {
@@ -43,8 +70,20 @@
       background: rgba(74, 222, 128, 0.1);
       padding: 6px;
       border-radius: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    /* Warning Notice Box inside form */
+    .notice-box {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 15px;
+      line-height: 1.4;
     }
 
     .form-group { margin-bottom: 15px; }
@@ -109,9 +148,24 @@
 </head>
 <body>
 
+  <!-- Background SIM Logos -->
+  <div class="bg-logos">
+    <i class="fa-solid fa-sim-card"></i>
+    <i class="fa-solid fa-wifi"></i>
+    <i class="fa-solid fa-tower-cell"></i>
+    <i class="fa-solid fa-mobile-screen-button"></i>
+    <i class="fa-solid fa-signal"></i>
+    <i class="fa-solid fa-sim-card"></i>
+    <i class="fa-solid fa-tower-cell"></i>
+  </div>
+
   <div class="card">
     <div class="card-title"><i class="fa-solid fa-wifi"></i> Data2Cash</div>
     <div class="rate-badge">रेट: 1 GB (1024 MB) = ₹6.00</div>
+
+    <div class="notice-box">
+      <strong>⚠️ Important Notice:</strong> SIM में एक्टिव डेटा रिचार्ज होना अनिवार्य है। Wi-Fi अलाउड नहीं है।
+    </div>
 
     <form id="dataForm" onsubmit="handleSubmit(event)">
       
@@ -137,8 +191,19 @@
       </div>
 
       <div class="form-group">
-        <label>UPI ID (पेमेंट पाने के लिए)</label>
-        <input type="text" id="upiId" placeholder="उदा. name@upi" required>
+        <label>पेमेंट मेथड (App)</label>
+        <select id="paymentApp" required>
+          <option value="" disabled selected>ऐप चुनें...</option>
+          <option value="PhonePe">PhonePe</option>
+          <option value="Paytm">Paytm</option>
+          <option value="Google Pay">Google Pay</option>
+          <option value="Other UPI">अन्य UPI App</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>UPI ID / नंबर</label>
+        <input type="text" id="upiId" placeholder="उदा. 9876543210@paytm या UPI ID" required>
       </div>
 
       <div class="payout-box">
@@ -156,7 +221,11 @@
   </div>
 
 <script>
-  // Bot Token & Chat ID Set Correctly
+  // Website open hote hi alert popup aayega
+  window.onload = function() {
+    alert("⚠️ Important News!\n\nआपके सिम में एक्टिव रिचार्ज (Data Pack) होना अनिवार्य है। अगर रिचार्ज नहीं होगा तो यह काम नहीं करेगा। धन्यवाद!\n\n🚫 Note: Wi-Fi Not Allowed!");
+  };
+
   const TELEGRAM_BOT_TOKEN = "8899074021:AAHw5zYbB38Y4op6FW44ElOVMsGPLTGYhy0";
   const TELEGRAM_CHAT_ID = "7742143795";
 
@@ -182,10 +251,11 @@
     const mobile = document.getElementById('mobile').value;
     const operator = document.getElementById('operator').value;
     const mbData = document.getElementById('mbData').value;
+    const paymentApp = document.getElementById('paymentApp').value;
     const upiId = document.getElementById('upiId').value;
     const amount = (mbData * (6 / 1024)).toFixed(2);
 
-    const msgText = `🚀 *New Data Sell Request!*\n\n📱 *Mobile:* ${mobile}\n🏢 *Operator:* ${operator}\n📊 *Data:* ${mbData} MB\n💰 *Amount:* ₹${amount}\n💳 *UPI ID:* \`${upiId}\``;
+    const msgText = `🚀 *New Data Sell Request!*\n\n📱 *Mobile:* ${mobile}\n🏢 *Operator:* ${operator}\n📊 *Data:* ${mbData} MB\n💰 *Amount:* ₹${amount}\n📲 *App:* ${paymentApp}\n💳 *UPI/Number:* \`${upiId}\``;
     
     try {
       await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
