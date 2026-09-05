@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayodhya AI - Shree Ram & Hanuman Ji Edition</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+    
+    /* Divine Background Image */
+    body { 
+      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.90)), 
+                  url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat fixed;
+      color: #f1f5f9; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100vh; 
+      overflow: hidden; 
+    }
+
+    /* Top Navigation Bar */
+    header { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(8px); border-bottom: 1px solid #d97706; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 22px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+    
+    .audio-control { background: #d97706; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+    /* Main Chat Container */
+    .chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; max-width: 900px; width: 100%; margin: 0 auto; scroll-behavior: smooth; }
+
+    /* Welcome Box */
+    .welcome-card { background: rgba(30, 41, 59, 0.85); border: 2px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin-top: 20px; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.2); backdrop-filter: blur(5px); }
+    .welcome-card h1 { font-size: 28px; color: #fbbf24; margin-bottom: 8px; }
+    .welcome-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 15px; }
+    
+    .suggestions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .chip { background: rgba(15, 23, 42, 0.8); border: 1px solid #f59e0b; color: #fef3c7; padding: 8px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .chip:hover { background: #d97706; color: #fff; transform: translateY(-2px); }
+
+    /* Message Bubbles */
+    .msg-row { display: flex; gap: 12px; width: 100%; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; flex-shrink: 0; }
+    .bot-avatar { background: #d97706; color: #fff; }
+    .user-avatar { background: #2563eb; color: #fff; }
+
+    .msg-content { max-width: 75%; padding: 14px 18px; border-radius: 12px; font-size: 15px; line-height: 1.5; word-wrap: break-word; }
+    .bot-content { background: rgba(30, 41, 59, 0.9); color: #f8fafc; border: 1px solid #d97706; border-top-left-radius: 2px; }
+    .user-content { background: #2563eb; color: #fff; border-top-right-radius: 2px; }
+
+    /* Bottom Input Box */
+    .input-wrapper { background: rgba(17, 24, 39, 0.9); border-top: 1px solid #d97706; padding: 15px 20px; }
+    .input-container { max-width: 900px; margin: 0 auto; display: flex; background: #1e293b; border: 1px solid #f59e0b; border-radius: 30px; padding: 6px 8px 6px 18px; align-items: center; }
+    .input-container:focus-within { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+    input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 15px; padding: 8px 0; }
+    .send-btn { background: #d97706; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .send-btn:hover { background: #b45309; }
+
+    footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 8px 0 0 0; }
+  </style>
+</head>
+<body onclick="startAudioOnFirstClick()">
+
+  <!-- Audio Element for Hanuman Chalisa -->
+  <audio id="chalisaAudio" loop preload="auto">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Top Header -->
+  <header>
+    <div class="logo">
+      🚩 Ayodhya AI
+    </div>
+    <button class="audio-control" onclick="toggleAudio(event)">
+      <i class="fa-solid fa-music" id="audioIcon"></i> <span id="audioStatus">संगीत चालू</span>
+    </button>
+  </header>
+
+  <!-- Chat Area -->
+  <div class="chat-container" id="chatContainer">
+    
+    <!-- Welcome Banner -->
+    <div class="welcome-card" id="welcomeCard">
+      <h1>जय श्री राम! Welcome to Ayodhya AI</h1>
+      <p>श्री राम और हनुमान जी की कृपा से संचालित आपका अपना AI असिस्टेंट। कोई भी सवाल पूछें!</p>
+      
+      <div class="suggestions">
+        <div class="chip" onclick="quickAsk('हनुमान चालीसा का क्या महत्व है?')">🚩 हनुमान चालीसा का महत्व</div>
+        <div class="chip" onclick="quickAsk('अयोध्या राम मंदिर के दर्शन का समय क्या है?')">🕌 राम मंदिर दर्शन समय</div>
+        <div class="chip" onclick="quickAsk('मुझे पढ़ाई और करियर में सफलता कैसे मिलेगी?')">💡 सफलता के उपाय</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Input Area -->
+  <div class="input-wrapper">
+    <div class="input-container">
+      <input type="text" id="userInput" placeholder="जय श्री राम! यहाँ अपना सवाल लिखें..." onkeypress="handleKeyPress(event)">
+      <button class="send-btn" onclick="sendMessage()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+    <footer>© Ayodhya AI Platform - जय श्री राम | जय हनुमान</footer>
+  </div>
+
+<script>
+  let isAudioPlaying = false;
+  const audio = document.getElementById('chalisaAudio');
+
+  function startAudioOnFirstClick() {
+    if (!isAudioPlaying) {
+      audio.play().then(() => {
+        isAudioPlaying = true;
+        document.getElementById('audioStatus').innerText = 'संगीत बंद करें';
+      }).catch(err => {
+        console.log("Audio play blocked by browser.");
+      });
+    }
+  }
+
+  function toggleAudio(event) {
+    event.stopPropagation(); // prevent body click trigger
+    if (isAudioPlaying) {
+      audio.pause();
+      isAudioPlaying = false;
+      document.getElementById('audioStatus').innerText = 'संगीत चालू करें';
+    } else {
+      audio.play();
+      isAudioPlaying = true;
+      document.getElementById('audioStatus').innerText = 'संगीत बंद करें';
+    }
+  }
+
+  function sendMessage() {
+    const inputField = document.getElementById('userInput');
+    const question = inputField.value.trim();
+    if (!question) return;
+
+    const welcomeCard = document.getElementById('welcomeCard');
+    if (welcomeCard) welcomeCard.style.display = 'none';
+
+    addMessage(question, 'user');
+    inputField.value = '';
+
+    setTimeout(() => {
+      const response = generateAIAnswer(question);
+      addMessage(response, 'bot');
+    }, 600);
+  }
+
+  function quickAsk(text) {
+    document.getElementById('userInput').value = text;
+    sendMessage();
+  }
+
+  function addMessage(text, sender) {
+    const container = document.getElementById('chatContainer');
+    
+    const row = document.createElement('div');
+    row.className = `msg-row ${sender}`;
+
+    if (sender === 'bot') {
+      row.innerHTML = `
+        <div class="msg-avatar bot-avatar">🚩</div>
+        <div class="msg-content bot-content">${text}</div>
+      `;
+    } else {
+      row.innerHTML = `
+        <div class="msg-content user-content">${text}</div>
+        <div class="msg-avatar user-avatar"><i class="fa-solid fa-user"></i></div>
+      `;
+    }
+
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  }
+
+  function generateAIAnswer(query) {
+    const q = query.toLowerCase();
+
+    if (q.includes('हनुमान') || q.includes('चालीसा')) {
+      return "<b>जय हनुमान!</b> हनुमान चालीसा का पाठ करने से भय, संकट और नकारात्मकता दूर होती है। रोजाना इसका पाठ करने से मन को शांति और शक्ति मिलती है।";
+    } 
+    else if (q.includes('राम') || q.includes('मंदिर') || q.includes('अयोध्या')) {
+      return "<b>जय श्री राम!</b> अयोध्या श्री राम जन्मभूमि है। भव्य राम मंदिर में रोजाना सुबह से शाम तक दर्शन और आरती का आयोजन होता है।";
+    } 
+    else if (q.includes('नमस्ते') || q.includes('hello') || q.includes('hi')) {
+      return "जय श्री राम! मैं <b>Ayodhya AI</b> हूँ। बताएं आज मैं आपकी क्या सहायता करूँ?";
+    } 
+    else {
+      return `जय श्री राम! आपके प्रश्न: <b>"${query}"</b> पर Ayodhya AI कार्य कर रहा है। आप धर्म, शिक्षा, तकनीक या सामान्य ज्ञान से जुड़ा कोई भी प्रश्न पूछ सकते हैं।`;
+    }
+  }
+</script>
+
+</body>
+</html>
